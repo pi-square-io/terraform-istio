@@ -1,0 +1,38 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: istio-addons
+  namespace: istio-system
+  annotations:
+    alb.ingress.kubernetes.io/scheme: internet-facing
+    alb.ingress.kubernetes.io/target-type: ip
+    # nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+    # nginx.ingress.kubernetes.io/rewrite-target: /$2
+spec:
+  ingressClassName: alb
+  rules:
+    - http:
+        paths:
+        - path: /grafana         
+          pathType: Prefix
+          backend:
+            service:
+              name: grafana
+              port:
+                number: 3000
+        - path: /            
+          pathType: Prefix
+          backend:
+            service:
+              name: frotnend
+              port:
+                number: 80
+        # - path: /            
+        #   pathType: Prefix
+        #   backend:
+        #     service:
+        #       name: kiali
+        #       port:
+        #         number: 20001
+        
+        
