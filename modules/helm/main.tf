@@ -7,11 +7,11 @@ resource "helm_release" "helm" {
   namespace        = var.namespace
   version          = var.release_version
 
-  dynamic "set" {
-    for_each = var.set
-    content {
-      name  = lookup(set.value, "name", null)
-      value = lookup(set.value, "value", null)
-    }
-  }
+  # dynamic "set" {
+  #   for_each = var.set
+  #   content {
+  #     name  = lookup(set.value, "name", null)
+  #     value = lookup(set.value, "value", null)
+  #   }
+  # }
 }
