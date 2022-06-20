@@ -38,7 +38,7 @@ aws_secret_access_key = XXXXXXXXXXXXXXXXX
 ### Clone the repo
 
 ```shell script
-git clone git@github.com:pi-square-io/terraform-eks-prometheus-grafana.git
+git clone https://github.com/pi-square-io/terraform-istio.git
 ```
 
 ### Set AWS Profile in example.tf 
@@ -49,13 +49,6 @@ locals {
 }
 ```
 
-### Set the auto-generated Grafana Password Path
-
-```hcl
-locals {
-  pass_grafana_path = "your-path"
-}
-```
  
 ### Go To example
 
