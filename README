@@ -1,14 +1,20 @@
 
 
-# Deploying istio Terraform
+# Deploying istio with Terraform
 
-- these modules we allow deploying amazon eks cluster, prometheus and grafana using Terraform     
+- Deploying a service mesh (istio) to establish a dedicated infrastructure layer to secure, connect, and monitor service-to-service communications between microservices.
+- Deploying a microservice application on the cluster
+- Collecting metrics and traces with istio-addons (Prometheus, Grafana, kiali and jaeger) 
 
 # Technology
 
+- [Istio](https://istio.io/) extends Kubernetes to establish a programmable, application-aware network using the powerful Envoy service proxy. It simplifies observability, traffic management, security, and policy with the leading service mesh.
+- [Microservice Application](https://github.com/GoogleCloudPlatform/microservices-demo)
 - [Amazon Elastic Kubernetes Service (Amazon EKS)](https://aws.amazon.com/eks/) is a managed container service to run and scale Kubernetes applications in the cloud or on-premises.
 - [Prometheus](https://prometheus.io/docs/introduction/overview/) is a free software application used for event monitoring and alerting. It records real-time metrics in a time series database (allowing for high dimensionality) built using a HTTP pull model, with flexible queries and real-time alerting
 - [Grafana](https://grafana.com/docs/grafana/latest/introduction/) is a multi-platform open source analytics and interactive visualization web application. It provides charts, graphs, and alerts for the web when connected to supported data sources
+- [Kiali](https://kiali.io/) Kiali is a management console for Istio service mesh.
+- [jaeger](https://www.jaegertracing.io/) is a distributed tracing system released as open source by Uber Technologies. It is used for monitoring and troubleshooting microservices-based distributed systems.
 - [Terraform ](https://kubernetes.io/docs/tasks/tools/) is an infrastructure as code tool that lets you define both cloud and on-prem resources in human-readable configuration files that you can version, reuse, and share. You can then use a consistent workflow to provision and manage all of your infrastructure throughout its lifecycle
 
 # Getting Started

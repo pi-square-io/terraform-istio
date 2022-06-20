@@ -56,7 +56,14 @@ resource "null_resource" "kubeconfig" {
 
 
 
-## ISTIO
+## ISTIO Addons
+
+# resource "null_resource" "istio-addons" {
+#   provisioner "local-exec" {
+#     command = "kubectl apply -f ../manifests/istio-addons -n istio-system "
+#   }
+#   depends_on = [null_resource.kubeconfig]
+# }
 
 resource "null_resource" "prometheus" {
   provisioner "local-exec" {
@@ -65,12 +72,6 @@ resource "null_resource" "prometheus" {
   depends_on = [null_resource.kubeconfig]
 }
 
-# resource "null_resource" "istio-addons" {
-#   provisioner "local-exec" {
-#     command = "kubectl apply -f ../manifests/istio-addons -n istio-system "
-#   }
-#   depends_on = [null_resource.kubeconfig]
-# }
 
 resource "null_resource" "grafana" {
   provisioner "local-exec" {
