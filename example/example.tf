@@ -1,40 +1,26 @@
 
 
-# module "istio-base" {
-#   source           = "../modules/helm"
-#   name             = "istio-base"
-#   repository       = "https://istio-release.storage.googleapis.com/charts"
-#   chart            = "base"
-#   create_namespace = false
-#   namespace        = kubernetes_namespace.istio-system.metadata.0.name
-
-#   # set = [
-#   #   {
-#   #     name  = "a"
-#   #     value = "a"
-#   #   }
-#   # ]
-# }
+module "istio-base" {
+  source           = "../modules/helm"
+  name             = "istio-base"
+  repository       = "https://istio-release.storage.googleapis.com/charts"
+  chart            = "base"
+  create_namespace = false
+  namespace        = kubernetes_namespace.istio-system.metadata.0.name
+}
 
 
 
 
-# module "istiod" {
-#   source           = "../modules/helm"
-#   name             = "istiod"
-#   repository       = "https://istio-release.storage.googleapis.com/charts"
-#   chart            = "istiod"
-#   create_namespace = false
-#   namespace        = kubernetes_namespace.istio-system.metadata.0.name
-
-#   # set = [
-#   #   {
-#   #     name  = "a"
-#   #     value = "a"
-#   #   }
-#   # ]
-#   depends_on = [module.istio-base]
-# }
+module "istiod" {
+  source           = "../modules/helm"
+  name             = "istiod"
+  repository       = "https://istio-release.storage.googleapis.com/charts"
+  chart            = "istiod"
+  create_namespace = false
+  namespace        = kubernetes_namespace.istio-system.metadata.0.name
+  depends_on = [module.istio-base]
+}
 
 
 
@@ -45,7 +31,7 @@
 #   chart            = "gateway"
 #   create_namespace = false
 #   namespace        = kubernetes_namespace.istio-system.metadata.0.name
-#   #depends_on = [module.istiod]
+#   depends_on = [module.istiod]
 # }
 
 
@@ -65,11 +51,10 @@ resource "null_resource" "kubeconfig" {
   provisioner "local-exec" {
     command = "aws eks update-kubeconfig --name ${local.eks_cluster_name} --region ${data.aws_region.current.id} --profile ${local.aws_account_profile}"
   }
-  # #depends_on = [module.istiod]
+  depends_on = [module.istiod]
 }
 
- 
- 
+
 
 ## ISTIO
 
@@ -79,6 +64,14 @@ resource "null_resource" "prometheus" {
   }
   depends_on = [null_resource.kubeconfig]
 }
+
+# resource "null_resource" "istio-addons" {
+#   provisioner "local-exec" {
+#     command = "kubectl apply -f ../manifests/istio-addons -n istio-system "
+#   }
+#   depends_on = [null_resource.kubeconfig]
+# }
+
 resource "null_resource" "grafana" {
   provisioner "local-exec" {
     command = "kubectl apply -f ../manifests/istio-addons/grafana.yaml -n istio-system "
@@ -97,7 +90,8 @@ resource "null_resource" "kiali" {
   }
   depends_on = [null_resource.kubeconfig]
 }
-# ## microservice
+
+## microservice
 
 resource "null_resource" "microservice" {
   provisioner "local-exec" {
@@ -107,51 +101,7 @@ resource "null_resource" "microservice" {
 }
 
 
-
-# resource "helm_release" "istio_base" {
-#   name  = "istio-base"
-#   repository = "https://istio-release.storage.googleapis.com/charts"
-#   chart = "base"
-
-#   timeout = 120
-#   cleanup_on_fail = true
-#   force_update    = false
-#   namespace       = kubernetes_namespace.istio-system.metadata.0.name
-
-
-#   depends_on = [ digitalocean_kubernetes_cluster.my_cluster]
-# }
-# resource "helm_release" "istiod" {
-#   name  = "istiod"
-#   repository = "https://istio-release.storage.googleapis.com/charts"
-#   chart = "istiod"
-
-#   timeout = 120
-#   cleanup_on_fail = true
-#   force_update    = false
-#   namespace       = kubernetes_namespace.istio-system.metadata.0.name
-
-#   set {
-#     name = "meshConfig.accessLogFile"
-#     value = "/dev/stdout"
-#   }
-
-
-#   depends_on = [ digitalocean_kubernetes_cluster.my_cluster, helm_release.istio_base]
-# }
-
-# resource "helm_release" "istio_ingress" {
-#   name  = "istio-ingress"
-#   repository = "https://istio-release.storage.googleapis.com/charts"
-#   chart = "gateway"
-
-#   timeout = 500
-#   cleanup_on_fail = true
-#   force_update    = false
-#   namespace       = kubernetes_namespace.istio-system.metadata.0.name
-
-#   depends_on = [ digitalocean_kubernetes_cluster.my_cluster, helm_release.istiod]
-# }
+## VPC 
 module "vpc" {
   source             = "../modules/vpc"
   availability_zones = var.availability_zones
@@ -164,6 +114,7 @@ module "vpc" {
   tags               = local.common_tags
 }
 
+## EKS Cluster
 module "eks_cluster" {
   source = "../modules/eks"
   cluster_role_name = "eks-cluster-role"
@@ -190,6 +141,7 @@ module "eks_cluster" {
 
 }
 
+## ALB Controller
 module "iam_alb_controller" {
   source               = "../modules/iam_alb_controller"
   identity_oidc_issuer = module.eks_cluster.identity_oidc_issuer
