@@ -1,12 +1,20 @@
+resource "kubernetes_namespace" "microservice" {
+  metadata {
+    annotations = {
+      name = "microservice"
+    }
 
+    name = "microservice"
+  }
+}
 
 module "istio-base" {
   source           = "../modules/helm"
   name             = "istio-base"
   repository       = "https://istio-release.storage.googleapis.com/charts"
   chart            = "base"
-  create_namespace = false
-  namespace        = kubernetes_namespace.istio-system.metadata.0.name
+  create_namespace = true
+  namespace        = "istio-system"
 }
 
 
@@ -17,8 +25,8 @@ module "istiod" {
   name             = "istiod"
   repository       = "https://istio-release.storage.googleapis.com/charts"
   chart            = "istiod"
-  create_namespace = false
-  namespace        = kubernetes_namespace.istio-system.metadata.0.name
+  create_namespace = true
+  namespace        = "istio-system"
   depends_on = [module.istio-base]
 }
 
@@ -35,10 +43,10 @@ module "istiod" {
 # }
 
 
-
 locals {
   aws_account_profile = "pisquare"
 }
+
 
 locals {
   eks_cluster_name = "my-eks-cluster"
@@ -53,7 +61,6 @@ resource "null_resource" "kubeconfig" {
   }
   depends_on = [module.istiod]
 }
-
 
 
 ## ISTIO Addons
@@ -71,7 +78,6 @@ resource "null_resource" "prometheus" {
   }
   depends_on = [null_resource.kubeconfig]
 }
-
 
 resource "null_resource" "grafana" {
   provisioner "local-exec" {
