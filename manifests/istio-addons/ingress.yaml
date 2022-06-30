@@ -13,20 +13,20 @@ spec:
   rules:
     - http:
         paths:
-        - path: /grafana         
+        - path: /         
           pathType: Prefix
           backend:
             service:
               name: grafana
               port:
                 number: 3000
-        - path: /            
-          pathType: Prefix
-          backend:
-            service:
-              name: frotnend
-              port:
-                number: 80
+        # - path: /            
+        #   pathType: Prefix
+        #   backend:
+        #     service:
+        #       name: frotnend
+        #       port:
+        #         number: 80
         # - path: /            
         #   pathType: Prefix
         #   backend:

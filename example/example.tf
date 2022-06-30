@@ -107,6 +107,14 @@ resource "null_resource" "microservice" {
   depends_on = [null_resource.kubeconfig]
 }
 
+## ingress
+
+resource "null_resource" "ingress" {
+  provisioner "local-exec" {
+    command = "kubectl apply -f ../manifests/microservice/ingress.yaml -n istio-system"
+  }
+  depends_on = [null_resource.kubeconfig]
+}
 
 ## VPC 
 module "vpc" {
